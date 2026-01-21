@@ -13,7 +13,7 @@ MJPEG_URL="${MJPEG_URL:-https://binocular.lagorgeo.us/mjpeg/stream}"
 
 # Logical camera IDs to stream (space-separated). These are 0-indexed and
 # will be mapped to the available physical cameras after filtering.
-LOGICAL_IDS="0 1 2"
+LOGICAL_IDS="0 1 2 3"
 
 # Verbose logging (set to "true" to enable)
 VERBOSE="${VERBOSE:-false}"

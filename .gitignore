@@ -1,0 +1,3 @@
+# Ignore generated client files
+client/client
+client/pids-client.txt

@@ -13,7 +13,7 @@ MJPEG_URL="${MJPEG_URL:-https://binocular.lagorgeo.us/mjpeg/stream}"
 
 # Logical camera IDs to stream (space-separated). These are 0-indexed and
 # will be mapped to the available physical cameras after filtering.
-LOGICAL_IDS="0 1 2 3"
+LOGICAL_IDS="2 3"
 
 # Verbose logging (set to "true" to enable)
 VERBOSE="${VERBOSE:-false}"
@@ -75,14 +75,15 @@ LOG_DIR="logs"
 mkdir -p "$LOG_DIR"
 
 # --- Main Loop: Start Streaming ---
+i=0
 for logical_id in $LOGICAL_IDS; do
-  if [ "$logical_id" -ge "${#AVAILABLE_INDICES[@]}" ]; then
-      echo "Warning: Logical camera ID $logical_id is out of bounds (only ${#AVAILABLE_INDICES[@]} cameras available). Skipping."
+  if [ "$i" -ge "${#AVAILABLE_INDICES[@]}" ]; then
+      echo "Warning: Requested camera index $i for logical ID '$logical_id' is out of bounds (only ${#AVAILABLE_INDICES[@]} cameras available). Skipping."
       continue
   fi
 
-  # Map the logical ID (0, 1, 2...) to the actual physical camera index found.
-  physical_id=${AVAILABLE_INDICES[$logical_id]}
+  # Map the counter 'i' to the actual physical camera index found.
+  physical_id=${AVAILABLE_INDICES[$i]}
 
   echo "Starting stream for logical camera ID '${logical_id}' (physical ID: ${physical_id}) to ${MJPEG_URL}"
 
@@ -90,7 +91,7 @@ for logical_id in $LOGICAL_IDS; do
   echo "Logging to ${LOG_FILE}"
 
   # Build the command
-  CMD="./client -camera-id ${physical_id} -url ${MJPEG_URL}"
+  CMD="./client -camera-id ${physical_id} -stream-name camera_${logical_id} -url ${MJPEG_URL}"
   if [ "$VERBOSE" = "true" ]; then
     CMD="${CMD} -verbose"
   fi
@@ -109,7 +110,8 @@ for logical_id in $LOGICAL_IDS; do
   
     sleep 1
   
-  done
+  i=$((i + 1))
+done
 
 echo
 echo "All camera streams started."

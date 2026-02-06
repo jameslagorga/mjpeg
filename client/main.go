@@ -47,6 +47,7 @@ func main() {
 	// --- 1. Parse Command-Line Flags ---
 	cameraID := flag.String("camera-id", "", "Unique ID of the camera device to use.")
 	streamURL := flag.String("url", "http://localhost:8080/stream", "URL of the MJPEG service.")
+	streamName := flag.String("stream-name", "", "Name of the stream key to use. Defaults to 'camera_<camera-id>'.")
 	verbose := flag.Bool("verbose", false, "Enable verbose ffmpeg logs.")
 	flag.Parse()
 
@@ -54,7 +55,12 @@ func main() {
 		log.Fatal("camera-id flag is required")
 	}
 
-	streamKey := "camera_" + *cameraID
+	var streamKey string
+	if *streamName != "" {
+		streamKey = *streamName
+	} else {
+		streamKey = "camera_" + *cameraID
+	}
 	log.Printf("Starting stream for key '%s' on camera ID %s to URL %s", streamKey, *cameraID, *streamURL)
 
 	// --- 2. Set up signal handling for graceful shutdown ---
